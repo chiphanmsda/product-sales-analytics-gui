@@ -92,27 +92,3 @@ def do_query(sql):
         return [rows, count]
     else:
         return [(), 0]
-
-def do_query_return_all(sql):
-    cursor = None
-    
-    conn = make_connection()
-
-    try:
-        cursor = conn.cursor()
-        cursor.execute(sql)
-
-        # Return the all fetched data as a list of tuples,
-        # one tuple per table row.
-        rows = cursor.fetchall()
-        count = cursor.rowcount
-        
-        cursor.close()
-        return [rows, count]
-
-    except Error as e:
-        print('Query failed')
-        print(e)
-
-        cursor.close()
-        return [(), 0]
