@@ -17,22 +17,22 @@ class AppWindow(QWindow):
         self.ui = uic.loadUi('demo_app.ui')
         self.ui.show();
         
-        # Student dialog.
+        # Employees dialog.
         self._employees_dialog = EmployeesDialog()
         self.ui.employees_button.clicked.connect(self._show_employees_dialog)
         
-        # Teacher dialog.
+        # Product Lines dialog.
         self._productLines_dialog = ProductLinesDialog()
         self.ui.productLines_button.clicked.connect(self._show_productLines_dialog)
 
     def _show_employees_dialog(self):
         """
-        Show the student dialog.
+        Show the eployees dialog.
         """
         self._employees_dialog.show_dialog()
 
     def _show_productLines_dialog(self):
         """
-        Show the teacher dialog.
+        Show the product lines dialog.
         """
         self._productLines_dialog.show_dialog()

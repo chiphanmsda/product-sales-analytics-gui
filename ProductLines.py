@@ -55,7 +55,9 @@ class ProductLinesDialog(QDialog):
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(3, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(5, QHeaderView.Stretch)
         
     def _initialize_table(self):
         """
@@ -119,11 +121,15 @@ class ProductLinesDialog(QDialog):
         row_index = 0
         for row in rows:
             column_index = 0
-            
+            i = 0
             for data in row:
-                item = QTableWidgetItem(str(data))
+                string_item = str(data)
+                if i >= 4:
+                    string_item = "${:,.2f}".format(data)
+                item = QTableWidgetItem(string_item)
                 self.ui.sales_table.setItem(row_index, column_index, item)
                 column_index += 1
+                i += 1
 
             row_index += 1
                 
