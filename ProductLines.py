@@ -3,9 +3,9 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QApplication, QTableWidgetItem, QHeaderView
 from mydbutils import do_query
 
-class TeacherDialog(QDialog):
+class ProductLinesDialog(QDialog):
     """
-    The teacher dialog.
+    The product lines dialog.
     """
     
     def __init__(self):
@@ -18,12 +18,14 @@ class TeacherDialog(QDialog):
         self.ui = uic.loadUi('productLines_dialog.ui')
 
         # Teacher menu and query button event handlers.
-        self.ui.teacher_cb.currentIndexChanged.connect(self._initialize_table)
-        self.ui.query_button.clicked.connect(self._enter_student_data)
+        self.ui.product_lines_cb.currentIndexChanged.connect(self._initialize_table)
+        self.ui.query_button.clicked.connect(self._enter_product_lines_data)
         
         # Initialize the teacher menu and the student table.
-        self._initialize_teacher_menu()
+        self._initialize_product_lines_menu()
         self._initialize_table()
+        self.ui.monthly_radio.toggled.connect(self._initialize_table)
+        self.ui.quarterly_radio.toggled.connect(self._initialize_table)
         
     def show_dialog(self):
         """
@@ -31,26 +33,25 @@ class TeacherDialog(QDialog):
         """
         self.ui.show()
     
-    def _initialize_teacher_menu(self):
+    def _initialize_product_lines_menu(self):
         """
-        Initialize the teacher menu with teacher names from the database.
+        Initialize the product lines menu with product lines from the database.
         """
         sql = """
-            SELECT first, last FROM teacher
-            ORDER BY last
+            SELECT productLineName FROM productline
             """
         rows, _ = do_query(sql)
 
         # Set the menu items to the teacher names.
         for row in rows:
-            name = row[0] + ' ' + row[1]
-            self.ui.teacher_cb.addItem(name, row)     
+            name = row[0]
+            self.ui.product_lines_cb.addItem(name, row)     
             
     def _adjust_column_widths(self):
         """
         Adjust the column widths of the student table to fit the contents.
         """
-        header = self.ui.student_table.horizontalHeader();
+        header = self.ui.sales_table.horizontalHeader();
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
@@ -60,44 +61,68 @@ class TeacherDialog(QDialog):
         """
         Clear the table and set the column headers.
         """
-        self.ui.student_table.clear()
+        self.ui.sales_table.clear()
 
-        col = ['  ID  ', '   First   ', '   Last   ', 'Subject']
-        self.ui.student_table.setHorizontalHeaderLabels(col)        
+        col_1 = ['  Product Line  ', '  Month  ', '  Year End  ', '  Quantity  ',
+        '  Average Price Each ($000)  ', '  Total Sales ($000) ']
+
+        col_2 = ['  Product Line  ', '  Quarter  ', '  Year End  ', '  Quantity  ',
+        '  Average Price Each ($000)  ', '  Total Sales ($000) ']
+
+        if self.ui.monthly_radio.isChecked():
+            col = col_1
+        elif self.ui.quarterly_radio.isChecked():
+            col = col_2
+
+        self.ui.sales_table.setHorizontalHeaderLabels(col)        
         self._adjust_column_widths()
         
-    def _enter_student_data(self):    
+    def _enter_product_lines_data(self):    
         """
-        Enter student data from the query into the student table.
+        Enter monthly/quaterly sales data from the query into 
+        the star schema and return quaterly sales per
+        each product line.
         """    
-        name = self.ui.teacher_cb.currentData()
-        first_name = name[0]
-        last_name = name[1]
+        product_lines = self.ui.product_lines_cb.currentData()
+        product_line = product_lines[0]
         
-        sql = ( """
-            SELECT student.id, student.first, student.last, 
-                   class.subject
-            FROM student, teacher, class, takes
-            WHERE teacher.last = '""" + last_name + "' "
-            """
-            AND teacher.first = '""" + first_name + "' "
-            """
-            AND class.teacher_id = teacher.id 
-            AND takes.class_code = class.code
-            AND takes.student_id = student.id 
-            ORDER BY class.subject, student.last
+        sql_1 = ( """
+            SELECT pl.productLineName, ca.month, ca.year, sum(sh.quantityOrdered), ROUND(avg(sh.priceEach), 2), sum(sh.quantityOrdered*sh.priceEach)
+            FROM pinnacle_wh.shippedorders sh
+            JOIN pinnacle_wh.productline pl ON pl.productLineID = sh.productLineID
+            JOIN pinnacle_wh.calendar ca ON ca.calendar_key = sh.calendar_key
+            WHERE pl.productLineName = '""" + product_line + """' 
+            GROUP BY pl.productLineName, ca.month, ca.year
+            ORDER BY pl.productLineName, ca.year, ca.month
             """ 
-              )                
+              )
+        
+        sql_2 = ( """
+            SELECT pl.productLineName, ca.qtr, ca.year, sum(sh.quantityOrdered), ROUND(avg(sh.priceEach), 2), sum(sh.quantityOrdered*sh.priceEach)
+            FROM pinnacle_wh.shippedorders sh
+            JOIN pinnacle_wh.productline pl ON pl.productLineID = sh.productLineID
+            JOIN pinnacle_wh.calendar ca ON ca.calendar_key = sh.calendar_key
+            WHERE pl.productLineName = '""" + product_line + """' 
+            GROUP BY pl.productLineName, ca.qtr, ca.year
+            ORDER BY pl.productLineName, ca.year, ca.qtr
+            """ 
+              )
+
+        if self.ui.monthly_radio.isChecked():
+            sql = sql_1
+        elif self.ui.quarterly_radio.isChecked():
+            sql = sql_2              
         rows, _ = do_query(sql)
         
         # Set the student data into the table cells.
+        print(rows)
         row_index = 0
         for row in rows:
             column_index = 0
             
             for data in row:
                 item = QTableWidgetItem(str(data))
-                self.ui.student_table.setItem(row_index, column_index, item)
+                self.ui.sales_table.setItem(row_index, column_index, item)
                 column_index += 1
 
             row_index += 1
@@ -106,6 +131,6 @@ class TeacherDialog(QDialog):
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    form = TeacherDialog()
+    form = ProductLinesDialog()
     form.show_dialog()
     sys.exit(app.exec_())

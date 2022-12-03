@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QApplication, QTableWidgetItem, QHeaderView
-from mydbutils import do_query, do_query_multi, do_query_return_all
+from mydbutils import do_query
 
 class EmployeesDialog(QDialog):
     '''
@@ -63,10 +63,10 @@ class EmployeesDialog(QDialog):
         self.ui.sales_table.clear()
 
         col_1 = ['  First Name  ', '  Last Name  ', '  Manager Name  ', '  Month  ',
-        '  Year End  ', '  Revenue Made  ']
+        '  Year End  ', '  Revenue ($000) ']
 
         col_2 = ['  First Name  ', '  Last Name  ', '  Manager Name  ', '  Quater  ',
-        '  Year End  ', '  Revenue Made  ']
+        '  Year End  ', '  Revenue ($000) ']
 
         if self.ui.monthly_radio.isChecked():
             col = col_1
@@ -86,7 +86,7 @@ class EmployeesDialog(QDialog):
         last_name = name[1]
 
         sql_1 = ( """
-            SELECT sa.firstName, sa.lastName, sa.managerName, ca.month, ca.year, (sh.quantityOrdered*sh.priceEach)
+            SELECT sa.firstName, sa.lastName, sa.managerName, ca.month, ca.year, sum(sh.quantityOrdered*sh.priceEach)
             FROM shippedorders sh
             JOIN salesrepemployee sa ON sa.employeeNumber = sh.salesRepEmployeeNumber
             JOIN calendar ca ON ca.calendar_key = sh.calendar_key
@@ -98,7 +98,7 @@ class EmployeesDialog(QDialog):
               )
         
         sql_2 = ( """
-            SELECT sa.firstName, sa.lastName, sa.managerName, ca.qtr, ca.year, (sh.quantityOrdered*sh.priceEach)
+            SELECT sa.firstName, sa.lastName, sa.managerName, ca.qtr, ca.year, sum(sh.quantityOrdered*sh.priceEach)
             FROM shippedorders sh
             JOIN salesrepemployee sa ON sa.employeeNumber = sh.salesRepEmployeeNumber
             JOIN calendar ca ON ca.calendar_key = sh.calendar_key
@@ -117,8 +117,9 @@ class EmployeesDialog(QDialog):
         rows, count = do_query(sql)
         
         # Set the sales data into the table cells.
-        row_index = 0 
+        row_index = 0
         for row in rows:
+            print(row)
             column_index = 0
             
             for data in row:

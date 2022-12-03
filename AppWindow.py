@@ -1,7 +1,7 @@
 from PyQt5 import uic
 from PyQt5.QtGui import QWindow
 from Employees import EmployeesDialog
-from ProductLines import TeacherDialog
+from ProductLines import ProductLinesDialog
 
 class AppWindow(QWindow):
     """
@@ -22,7 +22,7 @@ class AppWindow(QWindow):
         self.ui.employees_button.clicked.connect(self._show_employees_dialog)
         
         # Teacher dialog.
-        self._productLines_dialog = TeacherDialog()
+        self._productLines_dialog = ProductLinesDialog()
         self.ui.productLines_button.clicked.connect(self._show_productLines_dialog)
 
     def _show_employees_dialog(self):

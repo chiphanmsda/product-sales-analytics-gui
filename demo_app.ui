@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>461</width>
-    <height>410</height>
+    <width>604</width>
+    <height>383</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>361</width>
+      <width>451</width>
       <height>321</height>
      </rect>
     </property>
@@ -35,7 +35,7 @@
        <rect>
         <x>50</x>
         <y>10</y>
-        <width>141</width>
+        <width>281</width>
         <height>32</height>
        </rect>
       </property>
@@ -47,8 +47,8 @@
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>40</y>
-        <width>141</width>
+        <y>60</y>
+        <width>281</width>
         <height>32</height>
        </rect>
       </property>
@@ -59,8 +59,8 @@
      <widget class="QGroupBox" name="checkbox_group">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>80</y>
+        <x>80</x>
+        <y>180</y>
         <width>120</width>
         <height>71</height>
        </rect>
@@ -98,10 +98,10 @@
      <widget class="QGroupBox" name="radio_group">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>180</y>
+        <x>280</x>
+        <y>160</y>
         <width>81</width>
-        <height>71</height>
+        <height>91</height>
        </rect>
       </property>
       <property name="title">
@@ -422,7 +422,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>461</width>
+     <width>604</width>
      <height>18</height>
     </rect>
    </property>
