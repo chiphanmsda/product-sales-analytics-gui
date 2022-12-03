@@ -24,6 +24,8 @@ class EmployeesDialog(QDialog):
         # Initialize the teacher menu and the salesrepemployee table.
         self._initialize_employees_menu()
         self._initialize_table()
+        self.ui.monthly_radio.toggled.connect(self._initialize_table)
+        self.ui.quarterly_radio.toggled.connect(self._initialize_table)
         
     def show_dialog(self):
         """
@@ -37,7 +39,7 @@ class EmployeesDialog(QDialog):
         """
         sql = """
             SELECT firstName, lastName FROM pinnacle_wh.salesrepemployee
-            ORDER BY lastName
+            ORDER BY firstName, lastName
             """
         rows, _ = do_query(sql)
 
@@ -60,8 +62,16 @@ class EmployeesDialog(QDialog):
         """
         self.ui.sales_table.clear()
 
-        col = ['  First Name  ', '  Last Name  ', '  Manager Name  ', '  Quater  ',
+        col_1 = ['  First Name  ', '  Last Name  ', '  Manager Name  ', '  Month  ',
         '  Year End  ', '  Revenue Made  ']
+
+        col_2 = ['  First Name  ', '  Last Name  ', '  Manager Name  ', '  Quater  ',
+        '  Year End  ', '  Revenue Made  ']
+
+        if self.ui.monthly_radio.isChecked():
+            col = col_1
+        elif self.ui.quarterly_radio.isChecked():
+            col = col_2
         self.ui.sales_table.setHorizontalHeaderLabels(col)        
         self._adjust_column_widths()
         
@@ -74,8 +84,20 @@ class EmployeesDialog(QDialog):
         name = self.ui.employees_cb.currentData()
         first_name = name[0]
         last_name = name[1]
+
+        sql_1 = ( """
+            SELECT sa.firstName, sa.lastName, sa.managerName, ca.month, ca.year, (sh.quantityOrdered*sh.priceEach)
+            FROM shippedorders sh
+            JOIN salesrepemployee sa ON sa.employeeNumber = sh.salesRepEmployeeNumber
+            JOIN calendar ca ON ca.calendar_key = sh.calendar_key
+            WHERE sa.firstName = '""" + first_name + """'
+            AND sa.lastName = '""" + last_name + """'
+            GROUP BY sa.firstName, sa.lastName, sa.managerName, ca.month, ca.year
+            ORDER BY sa.firstName, sa.lastName, ca.year, ca.month
+            """ 
+              )
         
-        sql = ( """
+        sql_2 = ( """
             SELECT sa.firstName, sa.lastName, sa.managerName, ca.qtr, ca.year, (sh.quantityOrdered*sh.priceEach)
             FROM shippedorders sh
             JOIN salesrepemployee sa ON sa.employeeNumber = sh.salesRepEmployeeNumber
@@ -86,11 +108,16 @@ class EmployeesDialog(QDialog):
             ORDER BY sa.firstName, sa.lastName, ca.year, ca.qtr
             """ 
               )
-        print(sql)
+
+        if self.ui.monthly_radio.isChecked():
+            sql = sql_1
+        elif self.ui.quarterly_radio.isChecked():
+            sql = sql_2
+        
         rows, count = do_query(sql)
         
         # Set the sales data into the table cells.
-        row_index = 0
+        row_index = 0 
         for row in rows:
             column_index = 0
             

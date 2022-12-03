@@ -15,7 +15,7 @@ class TeacherDialog(QDialog):
         super().__init__()
         
         # Load the dialog components.
-        self.ui = uic.loadUi('teacher_dialog.ui')
+        self.ui = uic.loadUi('productLines_dialog.ui')
 
         # Teacher menu and query button event handlers.
         self.ui.teacher_cb.currentIndexChanged.connect(self._initialize_table)

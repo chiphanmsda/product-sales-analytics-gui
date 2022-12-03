@@ -1,7 +1,7 @@
 from PyQt5 import uic
 from PyQt5.QtGui import QWindow
-from EmployeesDialog import EmployeesDialog
-from TeacherDialog import TeacherDialog
+from Employees import EmployeesDialog
+from ProductLines import TeacherDialog
 
 class AppWindow(QWindow):
     """
@@ -19,11 +19,11 @@ class AppWindow(QWindow):
         
         # Student dialog.
         self._employees_dialog = EmployeesDialog()
-        self.ui.student_button.clicked.connect(self._show_employees_dialog)
+        self.ui.employees_button.clicked.connect(self._show_employees_dialog)
         
         # Teacher dialog.
-        self._teacher_dialog = TeacherDialog()
-        self.ui.teacher_button.clicked.connect(self._show_teacher_dialog)
+        self._productLines_dialog = TeacherDialog()
+        self.ui.productLines_button.clicked.connect(self._show_productLines_dialog)
 
     def _show_employees_dialog(self):
         """
@@ -31,8 +31,8 @@ class AppWindow(QWindow):
         """
         self._employees_dialog.show_dialog()
 
-    def _show_teacher_dialog(self):
+    def _show_productLines_dialog(self):
         """
         Show the teacher dialog.
         """
-        self._teacher_dialog.show_dialog()
+        self._productLines_dialog.show_dialog()

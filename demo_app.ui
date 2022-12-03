@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
-    <height>405</height>
+    <width>461</width>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
      <attribute name="title">
       <string>Buttons</string>
      </attribute>
-     <widget class="QPushButton" name="student_button">
+     <widget class="QPushButton" name="employees_button">
       <property name="geometry">
        <rect>
         <x>50</x>
@@ -40,10 +40,10 @@
        </rect>
       </property>
       <property name="text">
-       <string>Student's classes</string>
+       <string>Employees's performance</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="teacher_button">
+     <widget class="QPushButton" name="productLines_button">
       <property name="geometry">
        <rect>
         <x>50</x>
@@ -53,7 +53,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Teacher's students</string>
+       <string>Productlines' performance</string>
       </property>
      </widget>
      <widget class="QGroupBox" name="checkbox_group">
@@ -99,9 +99,9 @@
       <property name="geometry">
        <rect>
         <x>70</x>
-        <y>160</y>
+        <y>180</y>
         <width>81</width>
-        <height>91</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="title">
@@ -422,7 +422,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>424</width>
+     <width>461</width>
      <height>18</height>
     </rect>
    </property>
