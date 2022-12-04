@@ -98,6 +98,7 @@ class EmployeesDialog(QDialog):
         rows_city, _ = do_query(sql)
 
         # Set the menu items to the city by selected country
+        self.ui.city_cb.addItem("All", ("All",))
         for row in rows_city:
             c = row[0]
             self.ui.city_cb.addItem(c, row)
@@ -213,6 +214,11 @@ class EmployeesDialog(QDialog):
         elif self.ui.quarterly_radio_location.isChecked():
             month_quater = 'qtr'
 
+        if _city == 'All':
+            _city = (f"cu.city")
+        else:
+            _city = (f"\'{_city}\'")
+        
         sql = ( """
             SELECT cu.country, cu.city, sa.firstName, sa.lastName, sa.managerName, ca."""+ month_quater +""", ca.year, sum(sh.quantityOrdered*sh.priceEach)
             FROM shippedorders sh
@@ -220,11 +226,11 @@ class EmployeesDialog(QDialog):
             JOIN calendar ca ON ca.calendar_key = sh.calendar_key
             JOIN customers cu on cu.customerNumber = sh.customerNumber
             WHERE cu.country = '""" + _country + """'
-            AND cu.city = '""" + _city + """'
-            GROUP BY sa.firstName, sa.lastName, sa.managerName, ca."""+ month_quater +""", ca.year
-            ORDER BY sa.firstName, sa.lastName, ca.year, ca."""+ month_quater +"""
+            AND cu.city = """ + _city + """
+            GROUP BY cu.country, cu.city, sa.firstName, sa.lastName, sa.managerName, ca."""+ month_quater +""", ca.year
+            ORDER BY cu.country, cu.city, sa.firstName, sa.lastName, ca.year, ca."""+ month_quater +"""
             """ 
-              )
+            )
 
         # Return data from database
         rows, count = do_query(sql)

@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="salesPerformance">
     <attribute name="title">
@@ -218,7 +218,7 @@
     <widget class="QGroupBox" name="radio_group_2">
      <property name="geometry">
       <rect>
-       <x>310</x>
+       <x>320</x>
        <y>20</y>
        <width>211</width>
        <height>51</height>
@@ -260,8 +260,8 @@
     <widget class="QPushButton" name="query_button_location">
      <property name="geometry">
       <rect>
-       <x>530</x>
-       <y>30</y>
+       <x>550</x>
+       <y>40</y>
        <width>113</width>
        <height>32</height>
       </rect>
@@ -313,6 +313,47 @@
      <column/>
      <column/>
      <column/>
+    </widget>
+    <widget class="QComboBox" name="year_cb">
+     <property name="geometry">
+      <rect>
+       <x>900</x>
+       <y>40</y>
+       <width>121</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="query_button_location_pie">
+     <property name="geometry">
+      <rect>
+       <x>690</x>
+       <y>40</y>
+       <width>181</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Pie Chart Per Year And Country</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_year">
+     <property name="geometry">
+      <rect>
+       <x>900</x>
+       <y>10</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Select Year</string>
+     </property>
     </widget>
    </widget>
   </widget>

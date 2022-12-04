@@ -3,6 +3,7 @@ import pandas as pd
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QApplication, QGraphicsScene, QGraphicsView
 from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from mydbutils import do_query, set_data_to_table_cells, adjust_column_widths
 
@@ -36,6 +37,7 @@ class ProductLinesDialog(QDialog):
         # When the country is changed, initialize the city menu again
         self.ui.country_cb.currentIndexChanged.connect(self._initialize_city_menu)
         self.ui.query_button_location.clicked.connect(self._enter_product_lines_data_location)
+        self.ui.query_button_location_pie.clicked.connect(self._draw_pie_chart)
 
         # Initialize the location menu and sales table.
         self._initialize_country_menu()
@@ -44,12 +46,29 @@ class ProductLinesDialog(QDialog):
         self.ui.quarterly_radio_location.toggled.connect(self._initialize_table_location)
         self.ui.country_cb.currentIndexChanged.connect(self._initialize_table_location)
         self.ui.city_cb.currentIndexChanged.connect(self._initialize_table_location)
+
+        # Initialize years menu for pie chart
+        self._initialize_years_menu()
         
     def show_dialog(self):
         """
         Show this dialog.
         """
         self.ui.show()
+    
+    def _initialize_years_menu(self):
+        """
+        Initialize the years of sales menu from the database.
+        """
+        sql = """
+            SELECT distinct year FROM calendar
+            """
+        rows, _ = do_query(sql)
+
+        # Set the menu items to the teacher names.
+        for row in rows:
+            year = str(row[0])
+            self.ui.year_cb.addItem(year, row)
     
     def _initialize_product_lines_menu(self):
         """
@@ -95,6 +114,7 @@ class ProductLinesDialog(QDialog):
         rows_city, _ = do_query(sql)
 
         # Set the menu items to the city by selected country
+        self.ui.city_cb.addItem("All", ("All",))
         for row in rows_city:
             c = row[0]
             self.ui.city_cb.addItem(c, row)
@@ -210,6 +230,11 @@ class ProductLinesDialog(QDialog):
             month_quater = 'month'
         elif self.ui.quarterly_radio_location.isChecked():
             month_quater = 'qtr'
+
+        if _city == 'All':
+            _city = (f"cu.city")
+        else:
+            _city = (f"\'{_city}\'")
         
         sql = ( """
             SELECT cu.country, cu.city, pl.productLineName, ca."""+ month_quater +""", ca.year, sum(sh.quantityOrdered), ROUND(avg(sh.priceEach), 2), sum(sh.quantityOrdered*sh.priceEach)
@@ -218,9 +243,9 @@ class ProductLinesDialog(QDialog):
             JOIN pinnacle_wh.calendar ca ON ca.calendar_key = sh.calendar_key
             JOIN customers cu on cu.customerNumber = sh.customerNumber
             WHERE cu.country = '""" + _country + """' 
-            AND cu.city = '""" + _city + """' 
-            GROUP BY pl.productLineName, ca."""+ month_quater +""", ca.year
-            ORDER BY pl.productLineName, ca.year, ca."""+ month_quater +"""
+            AND cu.city = """ + _city + """
+            GROUP BY cu.country, cu.city, pl.productLineName, ca."""+ month_quater +""", ca.year
+            ORDER BY cu.country, cu.city, pl.productLineName, ca.year, ca."""+ month_quater +"""
             """ 
               )
         
@@ -232,6 +257,50 @@ class ProductLinesDialog(QDialog):
         set_data_to_table_cells(self.ui.sales_table_location, rows, [6, 7])
                 
         adjust_column_widths(self.ui.sales_table_location)
+
+    def _draw_pie_chart(self):
+        """
+        """
+        country = self.ui.country_cb.currentData()
+        _country = country[0]
+
+        year = self.ui.year_cb.currentData()
+        _year = str(year[0])
+
+        sql = ( """
+            SELECT cu.country, pl.productLineName, ca.year, sum(sh.quantityOrdered), ROUND(avg(sh.priceEach), 2), sum(sh.quantityOrdered*sh.priceEach)
+            FROM pinnacle_wh.shippedorders sh
+            JOIN pinnacle_wh.productline pl ON pl.productLineID = sh.productLineID
+            JOIN pinnacle_wh.calendar ca ON ca.calendar_key = sh.calendar_key
+            JOIN customers cu on cu.customerNumber = sh.customerNumber
+            WHERE cu.country = '""" + _country + """'
+            AND ca.year = '""" + _year + """'
+            GROUP BY cu.country, pl.productLineName, ca.year
+            ORDER BY cu.country, pl.productLineName, ca.year
+            """ 
+              )
+        
+        # Return sales data from database
+        rows, _ = do_query(sql)
+              
+        # Creating dataset
+        df = pd.DataFrame(rows,columns=['Country', 'Product Line', 'Year', 'Quantity', 'Average Price Each ($000)', 'Total Sales ($000)'])
+        print(df)
+        product_lines = df['Product Line']
+        
+        revenues = df['Total Sales ($000)']
+        scene = QGraphicsScene()
+        self.ui.label_year = QGraphicsView(scene)
+        # Creating plot
+        fig = plt.figure(figsize =(7, 7))
+        plt.pie(revenues, labels = product_lines)
+        plt.title(f"Pie Chart Of {_year} Total Sales ($000) Per Product Line In {_country}")
+
+        canvas = FigureCanvas(fig)
+        proxy_widget = scene.addWidget(canvas)
+
+        self.ui.label_year.resize(700, 700)
+        self.ui.label_year.show()
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
