@@ -1,6 +1,9 @@
 import sys
+import pandas as pd
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QApplication, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import QDialog, QApplication, QTableWidgetItem, QHeaderView, QGraphicsScene, QGraphicsView
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from mydbutils import do_query
 
 class EmployeesDialog(QDialog):
@@ -168,7 +171,7 @@ class EmployeesDialog(QDialog):
         """
         Enter monthly/quaterly sales data from the query into 
         the star schema and return quaterly sales per
-        each employee.
+        each employee, then show the plot.
         """
         name = self.ui.employees_cb.currentData()
         first_name = name[0]
@@ -198,12 +201,38 @@ class EmployeesDialog(QDialog):
             """ 
               )
 
+        # Return data from database
         if self.ui.monthly_radio.isChecked():
-            sql = sql_1
+            rows, count = do_query(sql_1)
         elif self.ui.quarterly_radio.isChecked():
-            sql = sql_2
-        
-        rows, count = do_query(sql)
+            rows, count = do_query(sql_2)
+
+        # Plot the sales performance
+        df = pd.DataFrame(rows,columns=['First Name', 'Last Name', 'Manager Name', 'M/Q', 'Year', 'Revenue ($000)'])
+        df['Time'] = pd.to_datetime(df['Year'].astype(str) + df['M/Q'].astype(str), format='%Y%m').dt.strftime('%m-%Y')
+
+        print(df)
+
+        X = df['Revenue ($000)']
+        Y = df['Time']
+        # self.ui.graphicsView.clear()
+        scene = QGraphicsScene()
+        self.ui.label = QGraphicsView(scene)
+        figure = Figure()
+        figure.set_size_inches(len(X), 7)
+        axes = figure.gca()
+        axes.set_title(f"Sales Performance Of {first_name} {last_name}")
+        axes.plot(Y, X, "-k", label="Revenue Made ($000)")
+        axes.legend()
+        axes.grid(True)
+        axes.xaxis.label.set_size(5)
+        axes.get_lines()[0].set_color("red")
+
+        canvas = FigureCanvas(figure)
+        proxy_widget = scene.addWidget(canvas)
+
+        self.ui.label.resize(100*len(X), 700)
+        self.ui.label.show()
         
         # Set the sales data into the table cells.
         row_index = 0

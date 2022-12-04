@@ -1,6 +1,9 @@
 import sys
+import pandas as pd
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QApplication, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import QDialog, QApplication, QTableWidgetItem, QHeaderView, QGraphicsScene, QGraphicsView
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from mydbutils import do_query
 
 class ProductLinesDialog(QDialog):
@@ -166,7 +169,7 @@ class ProductLinesDialog(QDialog):
         """
         Enter monthly/quaterly sales data from the query into 
         the star schema and return quaterly sales per
-        each product line.
+        each product line and plot the graph.
         """    
         product_lines = self.ui.product_lines_cb.currentData()
         product_line = product_lines[0]
@@ -199,8 +202,35 @@ class ProductLinesDialog(QDialog):
             sql = sql_2              
         rows, _ = do_query(sql)
         
-        # Set the student data into the table cells.
-        print(rows)
+        # Plot the sales performance
+        df = pd.DataFrame(rows,columns=['Product Line', 'M/Q', 'Year End', 'Quantity', 'Average Price Each ($000)', 'Total Sales ($000)'])
+        df['Time'] = pd.to_datetime(df['Year End'].astype(str) + df['M/Q'].astype(str), format='%Y%m').dt.strftime('%m-%Y')
+
+        print(df)
+
+        X = df['Quantity']
+        Y = df['Time']
+        # self.ui.graphicsView.clear()
+        scene = QGraphicsScene()
+        self.ui.label = QGraphicsView(scene)
+        figure = Figure()
+        figure.set_size_inches(len(X), 7)
+        axes = figure.gca()
+        axes.set_title(f"Sales Of {product_line}")
+        axes.plot(Y, X, "-k", label="Quantity Sold")
+        axes.legend()
+        axes.grid(True)
+        axes.xaxis.label.set_size(5)
+        axes.get_lines()[0].set_color("red")
+
+        canvas = FigureCanvas(figure)
+        proxy_widget = scene.addWidget(canvas)
+
+        self.ui.label.resize(90*len(X), 700)
+        self.ui.label.show()
+
+        # Set the sales data into the table cells.
+        # print(rows)
         row_index = 0
         for row in rows:
             column_index = 0

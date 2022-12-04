@@ -315,11 +315,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="graph">
-    <attribute name="title">
-     <string>Graph</string>
-    </attribute>
-   </widget>
   </widget>
  </widget>
  <resources/>

@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="salesPerformance">
     <attribute name="title">
@@ -314,11 +314,6 @@
      <column/>
      <column/>
     </widget>
-   </widget>
-   <widget class="QWidget" name="graph">
-    <attribute name="title">
-     <string>Graph</string>
-    </attribute>
    </widget>
   </widget>
  </widget>

@@ -6,21 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>383</height>
+    <width>516</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Demo Widgets App</string>
+   <string>Pinnacle</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabs">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>20</y>
-      <width>451</width>
-      <height>321</height>
+      <x>50</x>
+      <y>30</y>
+      <width>401</width>
+      <height>251</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -28,13 +28,13 @@
     </property>
     <widget class="QWidget" name="buttons_tab">
      <attribute name="title">
-      <string>Buttons</string>
+      <string>Sales Performance Of Vehicle Production</string>
      </attribute>
      <widget class="QPushButton" name="employees_button">
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>10</y>
+        <y>50</y>
         <width>281</width>
         <height>32</height>
        </rect>
@@ -47,7 +47,7 @@
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>60</y>
+        <y>130</y>
         <width>281</width>
         <height>32</height>
        </rect>
@@ -56,376 +56,8 @@
        <string>Productlines' performance</string>
       </property>
      </widget>
-     <widget class="QGroupBox" name="checkbox_group">
-      <property name="geometry">
-       <rect>
-        <x>80</x>
-        <y>180</y>
-        <width>120</width>
-        <height>71</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Checkboxes</string>
-      </property>
-      <widget class="QCheckBox" name="option_1_checkbox">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>91</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Option 1</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="option_2_checkbox">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>40</y>
-         <width>87</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Option 2</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="radio_group">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>160</y>
-        <width>81</width>
-        <height>91</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Radio buttons</string>
-      </property>
-      <widget class="QRadioButton" name="red_radio">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>100</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Red</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="green_radio">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>40</y>
-         <width>100</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Green</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="blue_radio">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>60</y>
-         <width>100</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Blue</string>
-       </property>
-      </widget>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="inputs_tab">
-     <attribute name="title">
-      <string>Inputs</string>
-     </attribute>
-     <widget class="QLabel" name="edit_label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>20</y>
-        <width>60</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Line edit</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="line_edit">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>20</y>
-        <width>113</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="spin_label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>60</y>
-        <width>60</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Spin box</string>
-      </property>
-     </widget>
-     <widget class="QSpinBox" name="spinBox">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>60</y>
-        <width>48</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="slider_label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>100</y>
-        <width>41</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Slider</string>
-      </property>
-     </widget>
-     <widget class="QSlider" name="horizontalSlider">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>100</y>
-        <width>160</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-     <widget class="QLabel" name="dial_label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>170</y>
-        <width>31</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Dial</string>
-      </property>
-     </widget>
-     <widget class="QDial" name="dial">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>150</y>
-        <width>50</width>
-        <height>64</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="date_label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>230</y>
-        <width>41</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Date</string>
-      </property>
-     </widget>
-     <widget class="QDateEdit" name="dateEdit">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>220</y>
-        <width>110</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="time_label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>260</y>
-        <width>41</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Time</string>
-      </property>
-     </widget>
-     <widget class="QTimeEdit" name="timeEdit">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>260</y>
-        <width>118</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="slider_value_label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>130</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Slider value:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="slider_value">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>130</y>
-        <width>31</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>???</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="dial_value_label">
-      <property name="geometry">
-       <rect>
-        <x>140</x>
-        <y>170</y>
-        <width>60</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Dial value:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="dial_value">
-      <property name="geometry">
-       <rect>
-        <x>210</x>
-        <y>170</y>
-        <width>31</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>???</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="item_tab">
-     <attribute name="title">
-      <string>Item widgets</string>
-     </attribute>
-     <widget class="QLabel" name="list_llabel">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>60</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>List</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="table_label">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>160</y>
-        <width>60</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Table</string>
-      </property>
-     </widget>
-     <widget class="QListWidget" name="listWidget">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>10</y>
-        <width>181</width>
-        <height>121</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTableWidget" name="tableWidget">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>150</y>
-        <width>181</width>
-        <height>131</height>
-       </rect>
-      </property>
-      <property name="rowCount">
-       <number>5</number>
-      </property>
-      <property name="columnCount">
-       <number>4</number>
-      </property>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <column/>
-      <column/>
-      <column/>
-      <column/>
-     </widget>
     </widget>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>604</width>
-     <height>18</height>
-    </rect>
-   </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
