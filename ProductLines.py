@@ -37,7 +37,6 @@ class ProductLinesDialog(QDialog):
         # When the country is changed, initialize the city menu again
         self.ui.country_cb.currentIndexChanged.connect(self._initialize_city_menu)
         self.ui.query_button_location.clicked.connect(self._enter_product_lines_data_location)
-        self.ui.query_button_location_pie.clicked.connect(self._draw_pie_chart)
 
         # Initialize the location menu and sales table.
         self._initialize_country_menu()
@@ -47,8 +46,9 @@ class ProductLinesDialog(QDialog):
         self.ui.country_cb.currentIndexChanged.connect(self._initialize_table_location)
         self.ui.city_cb.currentIndexChanged.connect(self._initialize_table_location)
 
-        # Initialize years menu for pie chart
+        # Initialize years menu and draw pie chart
         self._initialize_years_menu()
+        self.ui.query_button_location_pie.clicked.connect(self._draw_pie_chart)
         
     def show_dialog(self):
         """
@@ -293,7 +293,7 @@ class ProductLinesDialog(QDialog):
         self.ui.label_year = QGraphicsView(scene)
         # Creating plot
         fig = plt.figure(figsize =(7, 7))
-        plt.pie(revenues, labels = product_lines)
+        plt.pie(revenues, labels = product_lines, autopct='%1.0f%%', pctdistance=1.1, labeldistance=1.2)
         plt.title(f"Pie Chart Of {_year} Total Sales ($000) Per Product Line In {_country}")
 
         canvas = FigureCanvas(fig)
