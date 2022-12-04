@@ -116,3 +116,41 @@ def do_query_return_all(sql):
 
         cursor.close()
         return [(), 0]
+
+def set_data_to_table_cells(ui_table, rows, money_index):
+    """ Function to set data from list of tuples
+    to ui_table cells, and change the column index
+    in money_index to money value
+    """
+    from PyQt5.QtWidgets import QTableWidgetItem
+    row_index = 0
+    for row in rows:
+        # print(row)
+        column_index = 0
+        i = 0
+        for data in row:
+            string_item = str(data)
+            if i in money_index:
+                string_item = "${:,.2f}".format(data)
+            item = QTableWidgetItem(string_item)
+            ui_table.setItem(row_index, column_index, item)
+            column_index += 1
+            i += 1
+
+        row_index += 1
+
+def adjust_column_widths(ui_table):
+    """ Function to resize all the columns
+    in the ui_table, the last column will
+    be stretched
+    """
+    from PyQt5.QtWidgets import QHeaderView
+    columns_count = ui_table.columnCount()
+    header = ui_table.horizontalHeader()
+    i = 0
+    while i < columns_count:
+        if i < columns_count - 1:
+            header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
+        else:
+            header.setSectionResizeMode(i, QHeaderView.Stretch)
+        i += 1

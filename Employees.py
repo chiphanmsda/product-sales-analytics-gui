@@ -1,10 +1,10 @@
 import sys
 import pandas as pd
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QApplication, QTableWidgetItem, QHeaderView, QGraphicsScene, QGraphicsView
+from PyQt5.QtWidgets import QDialog, QApplication, QGraphicsScene, QGraphicsView
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from mydbutils import do_query
+from mydbutils import do_query, set_data_to_table_cells, adjust_column_widths
 
 class EmployeesDialog(QDialog):
     '''
@@ -101,33 +101,6 @@ class EmployeesDialog(QDialog):
         for row in rows_city:
             c = row[0]
             self.ui.city_cb.addItem(c, row)
-            
-    def _adjust_column_widths(self):
-        """
-        Adjust the column widths of the sales table to fit the contents.
-        """
-        header = self.ui.sales_table.horizontalHeader();
-        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(5, QHeaderView.Stretch)
-
-    def _adjust_column_widths_location(self):
-        """
-        Adjust the column widths of the sales table per location
-        to fit the contents.
-        """
-        header = self.ui.sales_table_location.horizontalHeader();
-        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(5, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(6, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(7, QHeaderView.Stretch)
         
     def _initialize_table(self):
         """
@@ -135,18 +108,15 @@ class EmployeesDialog(QDialog):
         """
         self.ui.sales_table.clear()
 
-        col_1 = ['  First Name  ', '  Last Name  ', '  Manager Name  ', '  Month  ',
-        '  Year End  ', '  Revenue ($000) ']
-
-        col_2 = ['  First Name  ', '  Last Name  ', '  Manager Name  ', '  Quater  ',
-        '  Year End  ', '  Revenue ($000) ']
-
         if self.ui.monthly_radio.isChecked():
-            col = col_1
+            month_quater = ' Month '
         elif self.ui.quarterly_radio.isChecked():
-            col = col_2
+            month_quater = ' Quater '
+
+        col = ['  First Name  ', '  Last Name  ', '  Manager Name  ', month_quater, '  Year End  ', '  Revenue ($000) ']
+
         self.ui.sales_table.setHorizontalHeaderLabels(col)        
-        self._adjust_column_widths()
+        adjust_column_widths(self.ui.sales_table)
 
     def _initialize_table_location(self):
         """
@@ -154,18 +124,15 @@ class EmployeesDialog(QDialog):
         """
         self.ui.sales_table_location.clear()
 
-        col_1 = [' Country ', ' City ', ' First Name ', ' Last Name ', ' Manager Name ', ' Month ',
-        ' Year End ', ' Revenue ($000) ']
-
-        col_2 = [' Country ', ' City ', ' First Name ', ' Last Name ', ' Manager Name ', ' Quater ',
-        ' Year End ', ' Revenue ($000) ']
-
         if self.ui.monthly_radio_location.isChecked():
-            col = col_1
+            month_quater = ' Month '
         elif self.ui.quarterly_radio_location.isChecked():
-            col = col_2
+            month_quater = ' Quater '
+
+        col = [' Country ', ' City ', ' First Name ', ' Last Name ', ' Manager Name ', month_quater, ' Year End ', ' Revenue ($000) ']
+
         self.ui.sales_table_location.setHorizontalHeaderLabels(col)        
-        self._adjust_column_widths_location()
+        adjust_column_widths(self.ui.sales_table_location)
         
     def _enter_sales_data(self):    
         """
@@ -177,41 +144,31 @@ class EmployeesDialog(QDialog):
         first_name = name[0]
         last_name = name[1]
 
-        sql_1 = ( """
-            SELECT sa.firstName, sa.lastName, sa.managerName, ca.month, ca.year, sum(sh.quantityOrdered*sh.priceEach)
+        if self.ui.monthly_radio.isChecked():
+            month_quater = 'month'
+        elif self.ui.quarterly_radio.isChecked():
+            month_quater = 'qtr'
+
+        sql = ( """
+            SELECT sa.firstName, sa.lastName, sa.managerName, ca."""+ month_quater +""", ca.year, sum(sh.quantityOrdered*sh.priceEach)
             FROM shippedorders sh
             JOIN salesrepemployee sa ON sa.employeeNumber = sh.salesRepEmployeeNumber
             JOIN calendar ca ON ca.calendar_key = sh.calendar_key
             WHERE sa.firstName = '""" + first_name + """'
             AND sa.lastName = '""" + last_name + """'
-            GROUP BY sa.firstName, sa.lastName, sa.managerName, ca.month, ca.year
-            ORDER BY sa.firstName, sa.lastName, ca.year, ca.month
-            """ 
-              )
-        
-        sql_2 = ( """
-            SELECT sa.firstName, sa.lastName, sa.managerName, ca.qtr, ca.year, sum(sh.quantityOrdered*sh.priceEach)
-            FROM shippedorders sh
-            JOIN salesrepemployee sa ON sa.employeeNumber = sh.salesRepEmployeeNumber
-            JOIN calendar ca ON ca.calendar_key = sh.calendar_key
-            WHERE sa.firstName = '""" + first_name + """'
-            AND sa.lastName = '""" + last_name + """'
-            GROUP BY sa.firstName, sa.lastName, sa.managerName, ca.qtr, ca.year
-            ORDER BY sa.firstName, sa.lastName, ca.year, ca.qtr
+            GROUP BY sa.firstName, sa.lastName, sa.managerName, """+ month_quater +""", ca.year
+            ORDER BY sa.firstName, sa.lastName, ca.year, """+ month_quater +"""
             """ 
               )
 
         # Return data from database
-        if self.ui.monthly_radio.isChecked():
-            rows, count = do_query(sql_1)
-        elif self.ui.quarterly_radio.isChecked():
-            rows, count = do_query(sql_2)
+        rows, count = do_query(sql)
 
         # Plot the sales performance
         df = pd.DataFrame(rows,columns=['First Name', 'Last Name', 'Manager Name', 'M/Q', 'Year', 'Revenue ($000)'])
         df['Time'] = pd.to_datetime(df['Year'].astype(str) + df['M/Q'].astype(str), format='%Y%m').dt.strftime('%m-%Y')
 
-        print(df)
+        # print(df)
 
         X = df['Revenue ($000)']
         Y = df['Time']
@@ -235,23 +192,9 @@ class EmployeesDialog(QDialog):
         self.ui.label.show()
         
         # Set the sales data into the table cells.
-        row_index = 0
-        for row in rows:
-            # print(row)
-            column_index = 0
-            i = 0
-            for data in row:
-                string_item = str(data)
-                if i == 5:
-                    string_item = "${:,.2f}".format(data)
-                item = QTableWidgetItem(string_item)
-                self.ui.sales_table.setItem(row_index, column_index, item)
-                column_index += 1
-                i += 1
-
-            row_index += 1
+        set_data_to_table_cells(self.ui.sales_table, rows, [5])
                 
-        self._adjust_column_widths()
+        adjust_column_widths(self.ui.sales_table)
 
     def _enter_sales_data_location(self):    
         """
@@ -265,60 +208,34 @@ class EmployeesDialog(QDialog):
         city = self.ui.city_cb.currentData()
         _city = city[0]
 
-        sql_1 = ( """
-            SELECT cu.country, cu.city, sa.firstName, sa.lastName, sa.managerName, ca.month, ca.year, sum(sh.quantityOrdered*sh.priceEach)
+        if self.ui.monthly_radio_location.isChecked():
+            month_quater = 'month'
+        elif self.ui.quarterly_radio_location.isChecked():
+            month_quater = 'qtr'
+
+        sql = ( """
+            SELECT cu.country, cu.city, sa.firstName, sa.lastName, sa.managerName, ca."""+ month_quater +""", ca.year, sum(sh.quantityOrdered*sh.priceEach)
             FROM shippedorders sh
             JOIN salesrepemployee sa ON sa.employeeNumber = sh.salesRepEmployeeNumber
             JOIN calendar ca ON ca.calendar_key = sh.calendar_key
             JOIN customers cu on cu.customerNumber = sh.customerNumber
             WHERE cu.country = '""" + _country + """'
             AND cu.city = '""" + _city + """'
-            GROUP BY sa.firstName, sa.lastName, sa.managerName, ca.month, ca.year
-            ORDER BY sa.firstName, sa.lastName, ca.year, ca.month
-            """ 
-              )
-        
-        sql_2 = ( """
-            SELECT cu.country, cu.city, sa.firstName, sa.lastName, sa.managerName, ca.qtr, ca.year, sum(sh.quantityOrdered*sh.priceEach)
-            FROM shippedorders sh
-            JOIN salesrepemployee sa ON sa.employeeNumber = sh.salesRepEmployeeNumber
-            JOIN calendar ca ON ca.calendar_key = sh.calendar_key
-            JOIN customers cu on cu.customerNumber = sh.customerNumber
-            WHERE cu.country = '""" + _country + """'
-            AND cu.city = '""" + _city + """'
-            GROUP BY sa.firstName, sa.lastName, sa.managerName, ca.qtr, ca.year
-            ORDER BY sa.firstName, sa.lastName, ca.year, ca.qtr
+            GROUP BY sa.firstName, sa.lastName, sa.managerName, ca."""+ month_quater +""", ca.year
+            ORDER BY sa.firstName, sa.lastName, ca.year, ca."""+ month_quater +"""
             """ 
               )
 
-        if self.ui.monthly_radio_location.isChecked():
-            sql = sql_1
-        elif self.ui.quarterly_radio_location.isChecked():
-            sql = sql_2
-        
+        # Return data from database
         rows, count = do_query(sql)
         
         # Set the sales data into the table cells.
-        row_index = 0
-        for row in rows:
-            # print(row)
-            column_index = 0
-            i = 0
-            for data in row:
-                string_item = str(data)
-                if i == 7:
-                    string_item = "${:,.2f}".format(data)
-                item = QTableWidgetItem(string_item)
-                self.ui.sales_table_location.setItem(row_index, column_index, item)
-                column_index += 1
-                i += 1
-
-            row_index += 1
+        set_data_to_table_cells(self.ui.sales_table_location, rows, [7])
                 
-        self._adjust_column_widths_location()
+        adjust_column_widths(self.ui.sales_table_location)
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     form = EmployeesDialog()
     form.show_dialog()
-    sys.exit(app.exec_())        
+    sys.exit(app.exec_())
