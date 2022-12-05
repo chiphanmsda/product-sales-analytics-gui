@@ -180,11 +180,10 @@ class EmployeesDialog(QDialog):
         figure.set_size_inches(len(X), 7)
         axes = figure.gca()
         axes.set_title(f"Sales Performance Of {first_name} {last_name}")
-        axes.plot(Y, X, "-k", label="Revenue Made ($000)")
+        axes.plot(Y, X, "-k", color="red", label="Revenue Made ($000)")
         axes.legend()
         axes.grid(True)
         axes.xaxis.label.set_size(5)
-        axes.get_lines()[0].set_color("red")
 
         canvas = FigureCanvas(figure)
         proxy_widget = scene.addWidget(canvas)

@@ -185,8 +185,6 @@ class ProductLinesDialog(QDialog):
         df = pd.DataFrame(rows,columns=['Product Line', 'M/Q', 'Year End', 'Quantity', 'Average Price Each ($000)', 'Total Sales ($000)'])
         df['Time'] = pd.to_datetime(df['Year End'].astype(str) + df['M/Q'].astype(str), format='%Y%m').dt.strftime('%m-%Y')
 
-        print(df)
-
         X = df['Quantity']
         Y = df['Time']
         # self.ui.graphicsView.clear()
@@ -196,11 +194,9 @@ class ProductLinesDialog(QDialog):
         figure.set_size_inches(len(X), 7)
         axes = figure.gca()
         axes.set_title(f"Sales Of {product_line}")
-        axes.plot(Y, X, "-k", label="Quantity Sold")
+        axes.plot(Y, X, "-k", color="red", label="Quantity Sold")
         axes.legend()
         axes.grid(True)
-        axes.xaxis.label.set_size(5)
-        axes.get_lines()[0].set_color("red")
 
         canvas = FigureCanvas(figure)
         proxy_widget = scene.addWidget(canvas)
