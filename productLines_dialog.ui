@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1136</width>
+    <width>1255</width>
     <height>556</height>
    </rect>
   </property>
@@ -16,9 +16,9 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>20</y>
-     <width>1061</width>
+     <x>50</x>
+     <y>10</y>
+     <width>1181</width>
      <height>511</height>
     </rect>
    </property>
@@ -75,7 +75,7 @@
       <rect>
        <x>10</x>
        <y>70</y>
-       <width>991</width>
+       <width>1131</width>
        <height>381</height>
       </rect>
      </property>
@@ -275,7 +275,7 @@
       <rect>
        <x>10</x>
        <y>90</y>
-       <width>1021</width>
+       <width>1131</width>
        <height>381</height>
       </rect>
      </property>
@@ -317,7 +317,7 @@
     <widget class="QComboBox" name="year_cb">
      <property name="geometry">
       <rect>
-       <x>900</x>
+       <x>1020</x>
        <y>40</y>
        <width>121</width>
        <height>26</height>
@@ -327,9 +327,9 @@
     <widget class="QPushButton" name="query_button_location_pie">
      <property name="geometry">
       <rect>
-       <x>690</x>
+       <x>740</x>
        <y>40</y>
-       <width>181</width>
+       <width>241</width>
        <height>32</height>
       </rect>
      </property>
@@ -340,7 +340,7 @@
     <widget class="QLabel" name="label_year">
      <property name="geometry">
       <rect>
-       <x>900</x>
+       <x>1020</x>
        <y>10</y>
        <width>111</width>
        <height>31</height>

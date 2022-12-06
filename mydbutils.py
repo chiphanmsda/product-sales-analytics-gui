@@ -93,10 +93,8 @@ def do_query(sql):
     else:
         return [(), 0]
 
-def do_query_return_all(sql):
+def do_query_return_all(conn, sql):
     cursor = None
-    
-    conn = make_connection()
 
     try:
         cursor = conn.cursor()
