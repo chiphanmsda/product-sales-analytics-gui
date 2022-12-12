@@ -1,7 +1,10 @@
 from PyQt5 import uic
 from PyQt5.QtGui import QWindow
+from PyQt5.QtWidgets import QMessageBox
 from Employees import EmployeesDialog
 from ProductLines import ProductLinesDialog
+from Pinnacle_wh import perform_ETL_warehouse
+from mydbutils import executeScriptsFromFile
 
 class AppWindow(QWindow):
     """
@@ -15,7 +18,13 @@ class AppWindow(QWindow):
         super().__init__()
         
         self.ui = uic.loadUi('demo_app.ui')
-        self.ui.show();
+        self.ui.show()
+
+        # ETL for operational schema.
+        self.ui.etl_db_button.clicked.connect(self._perform_ETL_DB)
+
+        # ETL for warehouse schema.
+        self.ui.etl_wh_button.clicked.connect(self._perform_ETL_WH)
         
         # Employees dialog.
         self._employees_dialog = EmployeesDialog()
@@ -36,3 +45,34 @@ class AppWindow(QWindow):
         Show the product lines dialog.
         """
         self._productLines_dialog.show_dialog()
+
+    def _perform_ETL_WH(self):
+        """
+        Show message if the ETL is successfull or not.
+        """
+        msg = QMessageBox()
+        msg.setWindowTitle("Perform ETL For Warehouse:")
+
+        try:
+            perform_ETL_warehouse()
+            msg.setText("Successfully!")
+        except:
+            msg.setText("Unsuccessfully, please check pinnacle_wh schema!")
+
+        x = msg.exec_()
+
+    def _perform_ETL_DB(self):
+        """
+        Show message if the ETL is successfull or not.
+        """
+        msg = QMessageBox()
+        msg.setWindowTitle("Perform ETL For Operational Schema:")
+
+        check1 = executeScriptsFromFile("pinnacle_db.sql")
+
+        if check1 == 1:
+            msg.setText("Successfully!")
+        else:
+            msg.setText("Unsuccessfully, please check pinnacle_db schema!")
+
+        x = msg.exec_()
