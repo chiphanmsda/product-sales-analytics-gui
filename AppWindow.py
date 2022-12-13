@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMessageBox
 from Employees import EmployeesDialog
 from ProductLines import ProductLinesDialog
 from Pinnacle_wh import perform_ETL_warehouse
-from mydbutils import executeScriptsFromFile
+from mydbutils import executeScriptsFromFile, insert_csv
 
 class AppWindow(QWindow):
     """
@@ -57,7 +57,7 @@ class AppWindow(QWindow):
             perform_ETL_warehouse()
             msg.setText("Successfully!")
         except:
-            msg.setText("Unsuccessfully, please check pinnacle_wh schema!")
+            msg.setText("Unsuccessfully, please check pinnacle_wh schema or if the schema has been created!")
 
         x = msg.exec_()
 
@@ -68,11 +68,16 @@ class AppWindow(QWindow):
         msg = QMessageBox()
         msg.setWindowTitle("Perform ETL For Operational Schema:")
 
+        # Create tables and insert data for operational database
         check1 = executeScriptsFromFile("pinnacle_db.sql")
 
-        if check1 == 1:
+        # Isert data for orderdetails from csv file
+        check2 = insert_csv("INSERT INTO orderdetails VALUES (%s, %s, %s, %s)",
+        "orderdetails.csv")
+
+        if check1 == 1 and check2 == 1:
             msg.setText("Successfully!")
         else:
-            msg.setText("Unsuccessfully, please check pinnacle_db schema!")
+            msg.setText("Unsuccessfully, please check pinnacle_db schema or if the schema has been created!")
 
         x = msg.exec_()

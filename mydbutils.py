@@ -2,7 +2,7 @@ from mysql.connector import MySQLConnection, Error
 from configparser import ConfigParser
 import sqlite3
 from sqlite3 import OperationalError
-import ast
+import csv
 
 def read_config(config_file = 'pinnacle_wh.ini', section = 'mysql'):
     parser = ConfigParser()
@@ -186,4 +186,24 @@ def executeScriptsFromFile(filename, config_file='pinnacle_db.ini'):
             print('Query failed')
             print(e)
     
+    return check
+
+def insert_csv(sql_insert, filename, config_file='pinnacle_db.ini'):
+    conn = make_connection(config_file)
+    cursor = conn.cursor()
+    first = True
+    check = 0
+    with open(filename, newline='') as csv_file:
+        data = csv.reader(csv_file, delimiter=',', quotechar='"')
+        for row in data:
+            if not first:
+                try:
+                    cursor.execute(sql_insert, row)
+                    check = 1
+                except Error:
+                    print("ERROR: could be end of file")
+            first = False
+        conn.commit()
+    
+    cursor.close()
     return check
