@@ -1,5 +1,8 @@
 from mysql.connector import MySQLConnection, Error
 from configparser import ConfigParser
+import sqlite3
+from sqlite3 import OperationalError
+import csv
 
 def read_config(config_file = 'pinnacle_wh.ini', section = 'mysql'):
     parser = ConfigParser()
@@ -152,3 +155,55 @@ def adjust_column_widths(ui_table):
         else:
             header.setSectionResizeMode(i, QHeaderView.Stretch)
         i += 1
+
+def executeScriptsFromFile(filename, config_file='pinnacle_db.ini'):
+    """
+    filename = "pinnacle_db.sql"
+    """
+    conn = make_connection(config_file)
+    # Open and read the file as a single buffer
+    fd = open(filename, 'r')
+    sqlFile = fd.read()
+    fd.close()
+    check = 0
+
+    # all SQL commands (split on ';')
+    sqlCommands = sqlFile.split(';')
+
+    # Execute every command from the input file
+    if conn != None:
+        try:
+            cursor = conn.cursor()
+            for command in sqlCommands:
+                try:
+                    cursor.execute(command)
+                    check = 1
+                except OperationalError:
+                    print("Command skipped: ")
+
+            cursor.close()
+        except Error as e:
+            print('Query failed')
+            print(e)
+    
+    return check
+
+def insert_csv(sql_insert, filename, config_file='pinnacle_db.ini'):
+    conn = make_connection(config_file)
+    cursor = conn.cursor()
+    first = True
+    check = 0
+    with open(filename, newline='') as csv_file:
+        data = csv.reader(csv_file, delimiter=',', quotechar='"')
+        for row in data:
+            if not first:
+                try:
+                    cursor.execute(sql_insert, row)
+                    check = 1
+                except Error:
+                    print("ERROR: could be end of file")
+            first = False
+        conn.commit()
+    
+    cursor.close()
+    return check
